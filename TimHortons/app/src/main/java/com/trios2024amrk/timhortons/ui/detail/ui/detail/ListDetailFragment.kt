@@ -7,8 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.trios2024amrk.timhortons.R
+import com.trios2024amrk.timhortons.databinding.ListDetailFragmentBinding
 
 class ListDetailFragment : Fragment() {
 
@@ -16,7 +18,9 @@ class ListDetailFragment : Fragment() {
         fun newInstance() = ListDetailFragment()
     }
 
+    lateinit var binding: ListDetailFragmentBinding
     private lateinit var viewModel: ListDetailViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,8 +34,16 @@ class ListDetailFragment : Fragment() {
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(ListDetailViewModel::class.java)
+        binding = ListDetailFragmentBinding.inflate(inflater, container, false)
+        val recyclerAdapter = ListItemsRecyclerViewAdapter(viewModel.list)
+        binding.listItemsRecyclerview.adapter = recyclerAdapter
+        binding.listItemsRecyclerview.layoutManager = LinearLayoutManager(requireContext())
 
-        return inflater.inflate(R.layout.list_detail_fragment, container, false)
+        viewModel.onTaskAdded = {
+            recyclerAdapter.notifyDataSetChanged()
+        }
+
+        return binding.root
     }
 
 }

@@ -1,5 +1,6 @@
 package com.trios2024amrk.timhortons
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -74,17 +75,29 @@ class MainActivity : AppCompatActivity(), MainFragment.MainFragmentInteractionLi
     private fun showListDetail(list: TaskList) {
 
         val listDetailIntent = Intent(this, ListDetailActivity::class.java)
-
         listDetailIntent.putExtra(INTENT_LIST_KEY, list)
-
-        startActivity(listDetailIntent)
+        startActivityForResult(listDetailIntent, LIST_DETAIL_REQUEST_CODE)
     }
     companion object {
         const val INTENT_LIST_KEY = "list"
+        const val LIST_DETAIL_REQUEST_CODE = 123
     }
 
     override fun listItemTapped(list: TaskList) {
         showListDetail(list)
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data:
+    Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == LIST_DETAIL_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+
+            data?.let {
+
+                viewModel.updateList(data.getParcelableExtra(INTENT_LIST_KEY)!!)
+                viewModel.refreshLists()
+            }
+        }
     }
 
 
